@@ -2,11 +2,22 @@
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
-version: 2
+version: 2.1
+
+workflows:
+  my-workflow:
+    jobs:
+      - build:
+          context:
+            - docker-hub-creds
+
 jobs:
   build:
     docker:
-      - image: mbedos/mbed-os-env:stable
+      - image: mbedos/mbed-os-env-armc:latest
+        auth:
+          username: mbedos
+          password: $DOCKERHUB_PASSWORD
     working_directory: ~
     steps:
       - checkout:
@@ -14,5 +25,4 @@ jobs:
       - run: |
           cd mbed-os-example-blinky
           mbed deploy
-          mbed compile -t GCC_ARM -m K64F
-
+          mbed compile -t ARM -m K64F
